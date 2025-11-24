@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" style="height: auto; min-height: 100%;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مطعم وكافيه الذوق الرفيع</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./script.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="./styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D2691E',
+                        secondary: '#FF8C42',
+                        light: '#F5F5DC',
+                        dark: '#8B4513'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300" style="height: auto; min-height: 100%;"
+    x-data="appData()">
+
+    <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50 transition-colors duration-300">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-3 cursor-pointer" @click="currentPage = 'home'; isAdmin = false">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
+                        <i class="fas fa-utensils text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800 dark:text-white">الذوق الرفيع</h1>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">مطعم وكافيه</p>
+                    </div>
+                </div>
+
+                <nav class="flex items-center gap-3 flex-wrap">
+                    <button @click="currentPage = 'home'; isAdmin = false"
+                        class="px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-home ml-2"></i>الرئيسية
+                    </button>
+                    <button @click="isAdmin = !isAdmin; currentPage = isAdmin ? 'admin-products' : 'home'"
+                        class="px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-user-shield ml-2"></i><span x-text="isAdmin ? 'المستخدم' : 'الإدارة'"></span>
+                    </button>
+                    <button class="px-4 py-2 rounded-lg bg-primary hover:bg-dark text-white transition">
+                        <i class="fas fa-sign-in-alt ml-2"></i>دخول
+                    </button>
+                    <button class="px-4 py-2 rounded-lg bg-secondary hover:bg-primary text-white transition">
+                        <i class="fas fa-user-plus ml-2"></i>تسجيل
+                    </button>
+                    <button @click="toggleDarkMode()"
+                        class="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition flex items-center justify-center">
+                        <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-700'"></i>
+                    </button>
+                    <button @click="currentPage = 'wishlist'"
+                        class="relative w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition flex items-center justify-center">
+                        <i class="fas fa-heart text-red-500"></i>
+                        <span x-show="wishlist.length > 0"
+                            class="absolute -top-2 -left-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
+                            x-text="wishlist.length"></span>
+                    </button>
+                    <button @click="currentPage = 'cart'"
+                        class="relative w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-primary"></i>
+                        <span x-show="cart.length > 0"
+                            class="absolute -top-2 -left-2 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
+                            x-text="cart.length"></span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div x-show="!isAdmin && currentPage === 'home'">
+            <div class="swiper mb-8 rounded-2xl overflow-hidden shadow-2xl h-64 sm:h-80 md:h-96">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200" alt="مطعم">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <h2 class="text-3xl md:text-5xl font-bold mb-4">مرحباً بكم في الذوق الرفيع</h2>
+                                <p class="text-lg md:text-xl">تجربة طعام لا تُنسى</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1200" alt="طعام">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <h2 class="text-3xl md:text-5xl font-bold mb-4">أطباق شهية ومميزة</h2>
+                                <p class="text-lg md:text-xl">من المطبخ إلى طاولتك</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200" alt="قهوة">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <h2 class="text-3xl md:text-5xl font-bold mb-4">قهوة ومشروبات فاخرة</h2>
+                                <p class="text-lg md:text-xl">لحظات استرخاء مميزة</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+
+            <div class="mb-8 flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" x-model="searchQuery" placeholder="ابحث عن وجبة أو مشروب..."
+                        class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:border-primary focus:outline-none transition">
+                </div>
+                <select x-model="selectedCategory"
+                    class="px-6 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:border-primary focus:outline-none transition">
+                    <template x-for="cat in categories" :key="cat">
+                        <option :value="cat" x-text="cat"></option>
+                    </template>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <template x-for="product in filteredProducts" :key="product.id">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group">
+                        <div class="relative h-48 overflow-hidden">
+                            <img :src="product.image" :alt="product.name"
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                            <button @click="selectedProduct = product; currentPage = 'details'"
+                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100">
+                                <span class="bg-white text-primary px-6 py-2 rounded-lg font-bold">عرض التفاصيل</span>
+                            </button>
+                            <button @click="toggleWishlist(product)"
+                                class="absolute top-3 left-3 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+                                <i
+                                    :class="isInWishlist(product.id) ? 'fas fa-heart text-red-500' : 'far fa-heart text-gray-400'"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2" x-text="product.name"></h3>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-2xl font-bold text-primary" x-text="product.price + ' ريال'"></span>
+                                <span class="text-sm text-gray-600 dark:text-gray-400"><i
+                                        class="far fa-clock ml-1"></i><span x-text="product.time"></span></span>
+                            </div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-sm text-gray-600 dark:text-gray-400"><i
+                                        class="fas fa-shopping-bag ml-1"></i><span
+                                        x-text="product.orders + ' طلب'"></span></span>
+                                <span class="text-xs bg-secondary text-white px-3 py-1 rounded-full"
+                                    x-text="product.category"></span>
+                            </div>
+                            <button @click="addToCart(product)"
+                                class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-bold hover:shadow-lg transition-all duration-300 hover:scale-105">
+                                <i class="fas fa-cart-plus ml-2"></i>إضافة للسلة
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div x-show="!isAdmin && currentPage === 'wishlist'">
+            <div class="mb-6">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">قائمة المفضلة</h2>
+                <p class="text-gray-600 dark:text-gray-400">المنتجات التي أضفتها لقائمة المفضلة</p>
+            </div>
+            <div x-show="wishlist.length === 0" class="text-center py-16">
+                <i class="fas fa-heart text-gray-300 dark:text-gray-600 text-6xl mb-4"></i>
+                <p class="text-xl text-gray-600 dark:text-gray-400">قائمة المفضلة فارغة</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <template x-for="product in wishlist" :key="product.id">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300">
+                        <div class="relative h-48">
+                            <img :src="product.image" :alt="product.name" class="w-full h-full object-cover">
+                            <button @click="toggleWishlist(product)"
+                                class="absolute top-3 left-3 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+                                <i class="fas fa-heart text-red-500"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2" x-text="product.name"></h3>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-2xl font-bold text-primary" x-text="product.price + ' ريال'"></span>
+                                <span class="text-sm text-gray-600 dark:text-gray-400" x-text="product.time"></span>
+                            </div>
+                            <button @click="addToCart(product)"
+                                class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-bold hover:shadow-lg transition-all">
+                                <i class="fas fa-cart-plus ml-2"></i>إضافة للسلة
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div x-show="!isAdmin && currentPage === 'cart'">
+            <div class="mb-6">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">سلة المشتريات</h2>
+                <p class="text-gray-600 dark:text-gray-400">راجع طلباتك قبل الدفع</p>
+            </div>
+            <div x-show="cart.length === 0" class="text-center py-16">
+                <i class="fas fa-shopping-cart text-gray-300 dark:text-gray-600 text-6xl mb-4"></i>
+                <p class="text-xl text-gray-600 dark:text-gray-400">السلة فارغة</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-4">
+                    <template x-for="item in cart" :key="item.id">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 flex flex-col sm:flex-row gap-4">
+                            <img :src="item.image" :alt="item.name" class="w-full sm:w-32 h-32 object-cover rounded-lg">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2" x-text="item.name">
+                                </h3>
+                                <p class="text-2xl font-bold text-primary mb-3" x-text="item.price + ' ريال'"></p>
+                                <div class="flex items-center gap-3">
+                                    <button @click="updateQuantity(item.id, item.quantity - 1)"
+                                        class="w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition">-</button>
+                                    <span class="text-lg font-bold text-gray-800 dark:text-white"
+                                        x-text="item.quantity"></span>
+                                    <button @click="updateQuantity(item.id, item.quantity + 1)"
+                                        class="w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition">+</button>
+                                </div>
+                            </div>
+                            <button @click="removeFromCart(item.id)"
+                                class="self-start sm:self-center w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800 transition">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+                <div x-show="cart.length > 0" class="lg:col-span-1">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sticky top-24">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">ملخص الطلب</h3>
+                        <div class="space-y-3 mb-6">
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>المجموع الفرعي</span>
+                                <span x-text="cartTotal + ' ريال'"></span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>رسوم التوصيل</span>
+                                <span>15 ريال</span>
+                            </div>
+                            <div
+                                class="border-t border-gray-300 dark:border-gray-600 pt-3 flex justify-between text-xl font-bold text-gray-800 dark:text-white">
+                                <span>الإجمالي</span>
+                                <span x-text="(cartTotal + 15) + ' ريال'"></span>
+                            </div>
+                        </div>
+                        <button
+                            class="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 rounded-lg font-bold hover:shadow-lg transition-all hover:scale-105">
+                            <i class="fas fa-credit-card ml-2"></i>إتمام الطلب
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="!isAdmin && currentPage === 'details' && selectedProduct">
+            <button @click="currentPage = 'home'"
+                class="mb-6 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+                <i class="fas fa-arrow-right ml-2"></i>العودة
+            </button>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <div class="swiper rounded-2xl overflow-hidden shadow-2xl mb-4 h-80 md:h-96">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <img :src="selectedProduct?.image" :alt="selectedProduct?.name">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800"
+                                    alt="صورة إضافية">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800"
+                                    alt="صورة إضافية">
+                            </div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4" x-text="selectedProduct?.name">
+                    </h2>
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="text-4xl font-bold text-primary" x-text="selectedProduct?.price + ' ريال'"></span>
+                        <span class="text-sm bg-secondary text-white px-4 py-2 rounded-full"
+                            x-text="selectedProduct?.category"></span>
+                    </div>
+                    <div class="space-y-4 mb-6">
+                        <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                            <i class="far fa-clock text-xl"></i>
+                            <span>وقت التحضير: <span class="font-bold" x-text="selectedProduct?.time"></span></span>
+                        </div>
+                        <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                            <i class="fas fa-shopping-bag text-xl"></i>
+                            <span>عدد الطلبات: <span class="font-bold" x-text="selectedProduct?.orders"></span></span>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">الوصف</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed"
+                            x-text="selectedProduct?.description"></p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button @click="addToCart(selectedProduct)"
+                            class="flex-1 bg-gradient-to-r from-primary to-secondary text-white py-4 rounded-lg font-bold hover:shadow-lg transition-all hover:scale-105">
+                            <i class="fas fa-cart-plus ml-2"></i>إضافة للسلة
+                        </button>
+                        <button @click="toggleWishlist(selectedProduct)"
+                            class="w-14 h-14 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition flex items-center justify-center">
+                            <i :class="isInWishlist(selectedProduct?.id) ? 'fas fa-heart text-red-500' : 'far fa-heart text-gray-400'"
+                                class="text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="isAdmin && currentPage === 'admin-products'">
+            <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">إدارة المنتجات</h2>
+                    <p class="text-gray-600 dark:text-gray-400">عرض وتعديل وحذف المنتجات</p>
+                </div>
+                <div class="flex gap-3">
+                    <button @click="currentPage = 'admin-orders'"
+                        class="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-primary transition">
+                        <i class="fas fa-clipboard-list ml-2"></i>الطلبات
+                    </button>
+                    <button @click="currentPage = 'admin-stats'"
+                        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-dark transition">
+                        <i class="fas fa-chart-bar ml-2"></i>الإحصائيات
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <template x-for="product in products" :key="product.id">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="relative h-48">
+                            <img :src="product.image" :alt="product.name" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2" x-text="product.name"></h3>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-2xl font-bold text-primary" x-text="product.price + ' ريال'"></span>
+                                <span class="text-xs bg-secondary text-white px-3 py-1 rounded-full"
+                                    x-text="product.category"></span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button
+                                    class="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+                                    <i class="fas fa-edit ml-1"></i>تعديل
+                                </button>
+                                <button @click="deleteProduct(product.id)"
+                                    class="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition">
+                                    <i class="fas fa-trash ml-1"></i>حذف
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div x-show="isAdmin && currentPage === 'admin-orders'">
+            <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">إدارة الطلبات</h2>
+                    <p class="text-gray-600 dark:text-gray-400">عرض وتحديث حالة الطلبات</p>
+                </div>
+                <div class="flex gap-3">
+                    <button @click="currentPage = 'admin-products'"
+                        class="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-primary transition">
+                        <i class="fas fa-box ml-2"></i>المنتجات
+                    </button>
+                    <button @click="currentPage = 'admin-stats'"
+                        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-dark transition">
+                        <i class="fas fa-chart-bar ml-2"></i>الإحصائيات
+                    </button>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-4 text-right text-sm font-bold text-gray-700 dark:text-gray-300">رقم
+                                    الطلب</th>
+                                <th class="px-6 py-4 text-right text-sm font-bold text-gray-700 dark:text-gray-300">
+                                    العميل</th>
+                                <th class="px-6 py-4 text-right text-sm font-bold text-gray-700 dark:text-gray-300">عدد
+                                    المنتجات</th>
+                                <th class="px-6 py-4 text-right text-sm font-bold text-gray-700 dark:text-gray-300">
+                                    المجموع</th>
+                                <th class="px-6 py-4 text-right text-sm font-bold text-gray-700 dark:text-gray-300">
+                                    التاريخ</th>
+                                <th class="px-6 py-4 text-right text-sm font-bold text-gray-700 dark:text-gray-300">
+                                    الحالة</th>
+                                <th class="px-6 py-4 text-right text-sm font-bold text-gray-700 dark:text-gray-300">
+                                    الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <template x-for="order in orders" :key="order.id">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                    <td class="px-6 py-4 text-gray-800 dark:text-white font-bold"
+                                        x-text="'#' + order.id"></td>
+                                    <td class="px-6 py-4 text-gray-800 dark:text-white" x-text="order.customer"></td>
+                                    <td class="px-6 py-4 text-gray-800 dark:text-white" x-text="order.items"></td>
+                                    <td class="px-6 py-4 text-primary font-bold" x-text="order.total + ' ريال'"></td>
+                                    <td class="px-6 py-4 text-gray-600 dark:text-gray-400" x-text="order.date"></td>
+                                    <td class="px-6 py-4">
+                                        <select x-model="order.status"
+                                            @change="updateOrderStatus(order.id, order.status)"
+                                            class="px-3 py-1 rounded-lg text-sm font-bold border-2 focus:outline-none transition"
+                                            :class="{
+                                            'bg-yellow-100 text-yellow-800 border-yellow-300': order.status === 'قيد التحضير',
+                                            'bg-blue-100 text-blue-800 border-blue-300': order.status === 'جاهز للتسليم',
+                                            'bg-green-100 text-green-800 border-green-300': order.status === 'تم التسليم'
+                                        }">
+                                            <option value="قيد التحضير">قيد التحضير</option>
+                                            <option value="جاهز للتسليم">جاهز للتسليم</option>
+                                            <option value="تم التسليم">تم التسليم</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <button class="text-blue-500 hover:text-blue-700 transition">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="isAdmin && currentPage === 'admin-stats'">
+            <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">الإحصائيات</h2>
+                    <p class="text-gray-600 dark:text-gray-400">عرض إحصائيات المبيعات والطلبات</p>
+                </div>
+                <div class="flex gap-3">
+                    <button @click="currentPage = 'admin-products'"
+                        class="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-primary transition">
+                        <i class="fas fa-box ml-2"></i>المنتجات
+                    </button>
+                    <button @click="currentPage = 'admin-orders'"
+                        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-dark transition">
+                        <i class="fas fa-clipboard-list ml-2"></i>الطلبات
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-shopping-cart text-3xl opacity-80"></i>
+                        <span class="text-sm opacity-80">اليوم</span>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-1">45</h3>
+                    <p class="text-sm opacity-80">إجمالي الطلبات</p>
+                </div>
+                <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-dollar-sign text-3xl opacity-80"></i>
+                        <span class="text-sm opacity-80">اليوم</span>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-1">3,250</h3>
+                    <p class="text-sm opacity-80">المبيعات (ريال)</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-users text-3xl opacity-80"></i>
+                        <span class="text-sm opacity-80">الشهر</span>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-1">1,234</h3>
+                    <p class="text-sm opacity-80">العملاء</p>
+                </div>
+                <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg p-6 text-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-star text-3xl opacity-80"></i>
+                        <span class="text-sm opacity-80">المتوسط</span>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-1">4.8</h3>
+                    <p class="text-sm opacity-80">التقييم</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">الطلبات اليومية</h3>
+                    <div class="h-64 overflow-hidden">
+                        <canvas id="dailyOrdersChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">الطلبات حسب الفئة</h3>
+                    <div class="h-64 overflow-hidden">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 dark:bg-gray-900 text-white mt-16 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">الذوق الرفيع</h3>
+                            <p class="text-sm text-gray-400">مطعم وكافيه</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">نقدم لكم أفضل تجربة طعام مع أطباق شهية ومشروبات فاخرة في
+                        أجواء مريحة وعصرية. نسعى دائماً لإرضاء ذوقكم الرفيع.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">روابط سريعة</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition">الرئيسية</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition">القائمة</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition">من نحن</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition">اتصل بنا</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">تواصل معنا</h4>
+                    <div class="flex gap-3 mb-4">
+                        <a href="#"
+                            class="w-10 h-10 bg-gray-700 hover:bg-primary rounded-lg flex items-center justify-center transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 bg-gray-700 hover:bg-primary rounded-lg flex items-center justify-center transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 bg-gray-700 hover:bg-primary rounded-lg flex items-center justify-center transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 bg-gray-700 hover:bg-primary rounded-lg flex items-center justify-center transition">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                    <p class="text-gray-400 text-sm">الهاتف: 966501234567+</p>
+                    <p class="text-gray-400 text-sm">البريد: info@althouq.com</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>© 2024 الذوق الرفيع. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new Swiper('.swiper', {
+                loop: true,
+                autoplay: { delay: 3000, disableOnInteraction: false },
+                pagination: { el: '.swiper-pagination', clickable: true },
+                navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }
+            });
+
+            const dailyCtx = document.getElementById('dailyOrdersChart');
+            if (dailyCtx) {
+                new Chart(dailyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                        datasets: [{
+                            label: 'عدد الطلبات',
+                            data: [35, 42, 38, 50, 45, 48, 55],
+                            borderColor: '#D2691E',
+                            backgroundColor: 'rgba(210, 105, 30, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            const categoryCtx = document.getElementById('categoryChart');
+            if (categoryCtx) {
+                new Chart(categoryCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['وجبات', 'مشروبات', 'سلطات', 'حلويات'],
+                        datasets: [{
+                            data: [450, 380, 120, 200],
+                            backgroundColor: ['#D2691E', '#FF8C42', '#8B4513', '#F5F5DC']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
