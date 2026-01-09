@@ -196,20 +196,17 @@ The restaurant features a beautiful image gallery showcasing the venue and food:
 
 عرض سريع للصور الموجودة في المشروع. ضع ملفات الصور التالية في نفس مجلد المشروع (مع `README.md` و `index.html`):
 
-<p align="center">
-  <img src="r1.jpg" alt="r1" width="220" style="margin:6px" />
-  <img src="r2.jpg" alt="r2" width="220" style="margin:6px" />
-  <img src="r3.jpg" alt="r3" width="220" style="margin:6px" />
-  <br />
-  <img src="r4.jpg" alt="r4" width="220" style="margin:6px" />
-  <img src="r5.jpg" alt="r5" width="220" style="margin:6px" />
-  <img src="r6.jpg" alt="r6" width="220" style="margin:6px" />
-  <br />
-  <img src="r7.jpg" alt="r7" width="220" style="margin:6px" />
-  <img src="r8.jpg" alt="r8" width="220" style="margin:6px" />
-  <img src="r9.jpg" alt="r9" width="220" style="margin:6px" />
-</p>
 
+### Screenshot 1: Main Interface
+![r1](r1.png)
+![r2](r2.png)
+![r3](r3.png)
+![r4](r4.png)
+![r5](r5.png)
+![r6](r6.png)
+![r7](r7.png)
+![r8](r8.png)
+![r9](r9.png)
 
 ---
 
