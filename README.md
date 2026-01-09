@@ -192,20 +192,24 @@ Visit the live demo to:
 
 The restaurant features a beautiful image gallery showcasing the venue and food:
 
-### Restaurant Images (r1 to r9):
-```
-├── r1.jpg   - Restaurant entrance and ambiance
-├── r2.jpg   - Dining area setup
-├── r3.jpg   - Kitchen showcase
-├── r4.jpg   - Special dishes display
-├── r5.jpg   - Beverage selection
-├── r6.jpg   - Dessert presentation
-├── r7.jpg   - Cafe seating area
-├── r8.jpg   - Food preparation
-└── r9.jpg   - Restaurant panorama
-```
+### معرض الصور (r1 إلى r9)
 
-All gallery images are stored in the project root directory alongside `index.html` and can be integrated into the carousel or gallery page sections.
+عرض سريع للصور الموجودة في المشروع. ضع ملفات الصور التالية في نفس مجلد المشروع (مع `README.md` و `index.html`):
+
+<p align="center">
+  <img src="r1.jpg" alt="r1" width="220" style="margin:6px" />
+  <img src="r2.jpg" alt="r2" width="220" style="margin:6px" />
+  <img src="r3.jpg" alt="r3" width="220" style="margin:6px" />
+  <br />
+  <img src="r4.jpg" alt="r4" width="220" style="margin:6px" />
+  <img src="r5.jpg" alt="r5" width="220" style="margin:6px" />
+  <img src="r6.jpg" alt="r6" width="220" style="margin:6px" />
+  <br />
+  <img src="r7.jpg" alt="r7" width="220" style="margin:6px" />
+  <img src="r8.jpg" alt="r8" width="220" style="margin:6px" />
+  <img src="r9.jpg" alt="r9" width="220" style="margin:6px" />
+</p>
+
 
 ---
 
